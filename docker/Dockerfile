@@ -7,11 +7,13 @@ RUN apt update && \
     apt-get install -y --no-install-recommends \
     gcc \
     curl \
-    libcurl4-openssl-dev \
-    libssl-dev \
+    # libcurl4-openssl-dev \
+    # libssl-dev \
+    build-essential \
+    python-dev \
+    libpq-dev \
     git && \
     pip install -U pip \
-    && pip install pipenv \
     && cd /opt/app \
     # using virtual environment in this context is unnecessary, then
     # installing all packages globally.
