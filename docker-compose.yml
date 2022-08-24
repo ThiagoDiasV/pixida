@@ -1,0 +1,63 @@
+version: "3.6"
+volumes:
+  postgres_data: {}
+  es_data: {}
+
+services:
+  postgres:
+    image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: pixida
+      POSTGRES_PASSWORD: secret
+
+  migration:
+    build:
+      context: .
+      target: django-dev
+      dockerfile: ./docker/Dockerfile
+    image: pixida
+    environment: &app_environment
+      DJANGO_DEBUG: 1
+      DB_HOST: postgres
+      DB_NAME: pixida
+      DB_USER: pixida
+      DB_PASSWORD: secret
+      DB_PORT: 5432
+    command: ["migrate"]
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/opt/app
+    links:
+      - postgres
+    depends_on:
+      - postgres
+
+  app:
+    build:
+      context: .
+      target: django-dev
+      dockerfile: ./docker/Dockerfile
+    image: pixida
+    environment: &app_environment
+      DJANGO_DEBUG: 1
+      DB_HOST: postgres
+      DB_NAME: pixida
+      DB_USER: pixida
+      DB_PASSWORD: secret
+      DB_PORT: 5432
+    links:
+      - migration
+    depends_on:
+      - migration
+    stdin_open: true
+    tty: true
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/opt/app
+    command: ["runserver", "0.0.0.0:8000"]
