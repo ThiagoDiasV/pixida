@@ -52,5 +52,3 @@ jobs:
       working-directory: ./src
       run: |
         pytest
-
-    
