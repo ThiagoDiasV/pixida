@@ -1,0 +1,21 @@
+{
+    "production": {
+        "aws_region": "us-east-1",
+        "django_settings": "pixida.settings",
+        "project_name": "pixida",
+        "runtime": "python3.9",
+        "s3_bucket": "pixida-zappa",
+        "role_arn": "arn:aws:iam::644241028542:role/exec_lambda",
+        "aws_environment_variables": {
+            "DEBUG": "False",
+            "SECRET_KEY": "",
+            "ALLOWED_HOSTS": "llq5oyhty7.execute-api.us-east-1.amazonaws.com",
+            "DB_HOST": "",
+            "DB_PORT": "",
+            "DB_USER": "",
+            "DB_NAME": "",
+            "DB_PASSWORD": "",
+            "S3_BUCKET_STATIC_FILES": "pixida-bucket"
+        }
+    }
+}

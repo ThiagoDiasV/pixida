@@ -45,6 +45,7 @@ services:
     image: pixida
     environment: &app_environment
       DJANGO_DEBUG: 1
+      ALLOWED_HOSTS: localhost
       DB_HOST: postgres
       DB_NAME: pixida
       DB_USER: pixida
