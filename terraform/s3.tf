@@ -1,6 +1,31 @@
 resource "aws_s3_bucket" "static-assets-pixida" {
   bucket = var.S3_ORIGIN_ID
   force_destroy = true
+
+  cors_rule {
+        allowed_headers = [
+            "*",
+        ]
+        allowed_methods = [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+        ]
+        allowed_origins = [
+            "*",
+        ]
+        expose_headers  = []
+        max_age_seconds = 0
+    }
+
+    grant {
+        permissions = [
+            "READ",
+        ]
+        type        = "Group"
+        uri         = "http://acs.amazonaws.com/groups/global/AllUsers"
+    }
 }
 
 resource "aws_s3_bucket_acl" "pixida_acl" {

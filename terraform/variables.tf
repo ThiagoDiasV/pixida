@@ -17,5 +17,5 @@ variable "RDS_PASSWORD" {
 
 variable "S3_ORIGIN_ID" {
   type    = string
-  default = "pixida-static-assets-"
+  default = "pixida-bucket"
 }
