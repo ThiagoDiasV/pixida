@@ -3,7 +3,6 @@ import os
 
 
 with open("zappa_settings.json", "r+") as file:
-    print("opening file")
     data = json.load(file)
     data["production"]["aws_environment_variables"]["DB_HOST"] = os.getenv("DB_HOST")
     data["production"]["aws_environment_variables"]["DB_PORT"] = os.getenv("DB_PORT")
@@ -19,4 +18,3 @@ with open("zappa_settings.json", "r+") as file:
     file.seek(0)
     json.dump(data, file, indent=4)
     file.truncate()
-    print("done")
