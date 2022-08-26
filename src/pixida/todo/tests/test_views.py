@@ -61,9 +61,9 @@ class TestToDoViewSet:
 
     @pytest.mark.django_db
     def test_create_todo(self):
-        data = {"title": "my awesome title", "description": "my awesome description"}
+        data = {"id": "bb73670b-d5e6-42af-9e5a-ce4797841d3d", "title": "my awesome title", "description": "my awesome description"}
         url = reverse("todo-list")
-        response = self.client.post(url, format="json", data=data)
+        response = self.client.put(url, format="json", data=data)
         response_data = response.json()
         assert response.status_code == 201
         assert response_data["message"] == "To-Do object created successfully."

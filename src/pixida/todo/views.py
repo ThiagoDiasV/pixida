@@ -1,3 +1,4 @@
+from sqlite3 import IntegrityError
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
@@ -28,21 +29,7 @@ class ToDoViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(**docs.create_schema)
     def create(self, request, *args, **kwargs):
-        try:
-            response = super().create(request, *args, **kwargs)
-            return Response(
-                {
-                    "message": "To-Do object created successfully.",
-                    "todo": response.data,
-                },
-                status=status.HTTP_201_CREATED,
-            )
-        except Exception as exc:  # NOTE: That's not the ideal approach, catching a bare exception. Once we figure out possible exceptions we should catch specific exceptions
-            logger.exception(exc)
-            return Response(
-                {"error": "There was an error while creating a new To-Do object."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        pass
 
     @swagger_auto_schema(**docs.retrieve_schema)
     def retrieve(self, request, *args, **kwargs):
@@ -68,6 +55,42 @@ class ToDoViewSet(viewsets.ModelViewSet):
                 {"error": "There was an error while updating the To-Do object."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+    def put(self, request, pk=None):
+        """
+        Used to create new todos
+        """
+
+        self.kwargs = request.data
+
+        try:
+            instance = self.get_object()
+        except AssertionError:
+            instance = None
+        serializer = self.get_serializer(instance, data=request.data, partial=False)
+        serializer.is_valid(raise_exception=True)
+
+        if instance is None:  # Create workflow
+            if "id" in self.kwargs:
+                self.kwargs["pk"] = self.kwargs["id"]
+                del self.kwargs["id"]
+            lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+            lookup_value = self.kwargs[lookup_url_kwarg]
+            extra_kwargs = {self.lookup_field: lookup_value}
+            try:
+                serializer.save(**extra_kwargs)
+            except IntegrityError as exc:
+                logger.exception(exc)
+                return Response(
+                    {"error": "There was an error while creating a new To-Do object."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            else:
+                todo = serializer.data
+                return Response(
+                    {"message": "To-Do object created successfully.", "todo": todo},
+                    status=status.HTTP_201_CREATED,
+                )
 
     @swagger_auto_schema(**docs.destroy_schema)
     def destroy(self, request, *args, **kwargs):
